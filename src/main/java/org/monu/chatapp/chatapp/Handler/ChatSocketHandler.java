@@ -22,16 +22,18 @@ public class ChatSocketHandler extends TextWebSocketHandler {
     @Autowired
     private ChatRepo chatRepo;
 
+    @SuppressWarnings("checkstyle:WhitespaceAround")
     @Override
     public void afterConnectionEstablished(WebSocketSession session) throws Exception {
-
         String name = getName(session);
 
-        if(name != null){
-            sessions.put(name,session);
+        if (name != null) {
+            if (sessions.containsKey(name)) {
+                WebSocketSession oldSession = sessions.get(name);
+                if (oldSession.isOpen()) oldSession.close(CloseStatus.NORMAL);
+            }
+            sessions.put(name, session);
         }
-
-
     }
 
     @Override
@@ -39,8 +41,8 @@ public class ChatSocketHandler extends TextWebSocketHandler {
 
         String name = getName(session);
 
-        if(name != null){
-            sessions.remove(name,session);
+        if (name != null) {
+            sessions.remove(name, session);
         }
 
         System.out.println(status);
@@ -63,7 +65,7 @@ public class ChatSocketHandler extends TextWebSocketHandler {
 
         WebSocketSession receiverSession = sessions.get(receiver);
 
-        if(receiverSession != null && receiverSession.isOpen()){
+        if (receiverSession != null && receiverSession.isOpen()) {
 
             String objectToJson = gson.toJson(jsonMessageToObject);
 
@@ -84,7 +86,7 @@ public class ChatSocketHandler extends TextWebSocketHandler {
                 username = username.substring(0, username.indexOf("&"));
             }
         }
-        return username; // Return the extracted username
+        return username;
     }
 
 

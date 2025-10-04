@@ -1,20 +1,39 @@
 let ws;
 let username;
+let receiver;
 const connectedUsers = new Set();
 
 window.onload = () => {
     const senderInput = document.getElementById("sender");
+    const receiverInput = document.getElementById("receiver");
     const submitButton = document.getElementById("Submit");
 
-    senderInput.addEventListener("input", () => {
-        submitButton.disabled = senderInput.value.trim() === "";
-    });
+    function validateInputs() {
+        const senderVal = senderInput.value.trim();
+        const receiverVal = receiverInput.value.trim();
+        const validSender = checkUserName(senderVal);
+        const validReceiver = checkUserName(receiverVal);
+
+        if (senderVal === receiverVal) {
+            submitButton.disabled = true;
+        } else {
+            submitButton.disabled = !(validSender && validReceiver);
+        }
+    }
+
+    senderInput.addEventListener("input", validateInputs);
+    receiverInput.addEventListener("input", validateInputs);
 
     submitButton.addEventListener("click", () => {
         const name = senderInput.value.trim();
-        
+        const rec = receiverInput.value.trim();
+
         if (!checkUserName(name)) {
-            alert("Username must be at least 3 alphanumeric characters.");
+            alert("Username must be at least 3 alphanumeric characters and start with a letter.");
+            return;
+        }
+        if (!checkUserName(rec)) {
+            alert("Receiver's username must be at least 3 alphanumeric characters and start with a letter.");
             return;
         }
         if (connectedUsers.has(name)) {
@@ -23,13 +42,19 @@ window.onload = () => {
         }
 
         username = name;
+        receiver = rec;
         connectedUsers.add(username);
+
         document.querySelector(".pop_up").style.display = "none";
         document.querySelector(".chat-container").style.display = "flex";
+
         setupWebSocket();
     });
 
     senderInput.addEventListener("keyup", (e) => {
+        if (e.key === "Enter" && !submitButton.disabled) submitButton.click();
+    });
+    receiverInput.addEventListener("keyup", (e) => {
         if (e.key === "Enter" && !submitButton.disabled) submitButton.click();
     });
 };
@@ -56,7 +81,6 @@ function checkUserName(name) {
     return true;
 }
 
-
 function setupWebSocket() {
     const url = `ws://localhost:8080/chat?username=${encodeURIComponent(username)}`;
     ws = new WebSocket(url);
@@ -71,7 +95,9 @@ function setupWebSocket() {
         if (message.sender === username) {
             addMessage(message.message, "sent");
         } else {
-            addMessage(message.message, "received", message.sender);
+            if (message.sender === receiver) {
+                addMessage(message.message, "received", message.sender);
+            }
         }
     };
 
@@ -88,22 +114,21 @@ function setupWebSocket() {
 
 function sendMessage() {
     const messageInput = document.getElementById("messageInput");
-    const targetUser = document.getElementById("receiver").value.trim();
     const messageText = messageInput.value.trim();
 
     if (!ws || ws.readyState !== WebSocket.OPEN) {
         alert("WebSocket is not connected.");
         return;
     }
-    if (!targetUser) {
-        alert("Please enter recipient's username.");
+    if (!receiver) {
+        alert("No recipient specified.");
         return;
     }
     if (!messageText) return;
 
     const message = {
         sender: username,
-        receiver: targetUser,
+        receiver: receiver,
         message: messageText,
     };
 
@@ -124,7 +149,7 @@ function addMessage(text, type, sender = "") {
     }
 
     messageContainer.appendChild(messageInfo);
-    messageContainer.parentElement.scrollTop = messageContainer.parentElement.scrollHeight;
+    messageContainer.scrollTop = messageContainer.scrollHeight;
 }
 
 function insertMessage(text) {
@@ -133,5 +158,5 @@ function insertMessage(text) {
     messageInfo.classList.add("system-message");
     messageInfo.textContent = text;
     messageContainer.appendChild(messageInfo);
-    messageContainer.parentElement.scrollTop = messageContainer.parentElement.scrollHeight;
+    messageContainer.scrollTop = messageContainer.scrollHeight;
 }
