@@ -1,4 +1,4 @@
-package org.monu.chatapp.chatapp.Handler;
+package org.monu.chatapp.chatapp.handler;
 
 
 import lombok.Getter;

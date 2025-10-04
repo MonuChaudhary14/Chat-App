@@ -1,6 +1,6 @@
 package org.monu.chatapp.chatapp.configuration;
 
-import org.monu.chatapp.chatapp.Handler.ChatSocketHandler;
+import org.monu.chatapp.chatapp.handler.ChatSocketHandler;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.socket.config.annotation.EnableWebSocket;

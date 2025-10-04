@@ -1,4 +1,4 @@
-package org.monu.chatapp.chatapp.Handler;
+package org.monu.chatapp.chatapp.handler;
 
 import com.google.gson.Gson;
 import org.monu.chatapp.chatapp.entity.ChatEntity;
@@ -22,7 +22,6 @@ public class ChatSocketHandler extends TextWebSocketHandler {
     @Autowired
     private ChatRepo chatRepo;
 
-    @SuppressWarnings("checkstyle:WhitespaceAround")
     @Override
     public void afterConnectionEstablished(WebSocketSession session) throws Exception {
         String name = getName(session);
@@ -44,8 +43,6 @@ public class ChatSocketHandler extends TextWebSocketHandler {
         if (name != null) {
             sessions.remove(name, session);
         }
-
-        System.out.println(status);
 
     }
 
