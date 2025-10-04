@@ -13,7 +13,12 @@ window.onload = () => {
         const receiverVal = receiverInput.value.trim();
         const validSender = checkUserName(senderVal);
         const validReceiver = checkUserName(receiverVal);
-        submitButton.disabled = !(validSender && validReceiver);
+
+        if (senderVal === receiverVal) {
+            submitButton.disabled = true;
+        } else {
+            submitButton.disabled = !(validSender && validReceiver);
+        }
     }
 
     senderInput.addEventListener("input", validateInputs);
@@ -90,7 +95,6 @@ function setupWebSocket() {
         if (message.sender === username) {
             addMessage(message.message, "sent");
         } else {
-            // Only show messages from the receiver in this chat
             if (message.sender === receiver) {
                 addMessage(message.message, "received", message.sender);
             }
