@@ -24,14 +24,15 @@ public class ChatSocketHandler extends TextWebSocketHandler {
 
     @Override
     public void afterConnectionEstablished(WebSocketSession session) throws Exception {
-
         String name = getName(session);
 
         if(name != null){
-            sessions.put(name,session);
+            if(sessions.containsKey(name)) {
+                WebSocketSession oldSession = sessions.get(name);
+                if(oldSession.isOpen()) oldSession.close(CloseStatus.NORMAL);
+            }
+            sessions.put(name, session);
         }
-
-
     }
 
     @Override

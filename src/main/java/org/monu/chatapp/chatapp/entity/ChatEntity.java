@@ -1,12 +1,11 @@
 package org.monu.chatapp.chatapp.entity;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.Setter;
+
+import java.time.LocalDateTime;
 
 @Entity
 @Getter @Setter
@@ -17,8 +16,22 @@ public class ChatEntity {
     @Setter(AccessLevel.NONE)
     private Long id;
 
+    @Column(nullable = false, length = 50)
     private String sender;
+
+    @Column(nullable = false, length = 50)
     private String receiver;
+
+    @Column(nullable = false, length = 1000)
     private String message;
+
+    @Column(nullable = false, updatable = false)
+    private LocalDateTime createdAt;
+
+    @PrePersist
+    protected void onCreate() {
+        createdAt = LocalDateTime.now();
+    }
+
 
 }
