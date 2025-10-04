@@ -85,7 +85,7 @@ function setupWebSocket() {
 
         const protocol = location.protocol === 'https:' ? 'wss' : 'ws';
         const backendHost = "chat-app-7frc.onrender.com";
-        const url = `${protocol}://${backendHost}/ws/chat?user=${encodeURIComponent(username)}`;
+        const url = `${protocol}://${backendHost}/chat?user=${encodeURIComponent(username)}`;
 
     ws = new WebSocket(url);
 
